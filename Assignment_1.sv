@@ -1,14 +1,35 @@
+`timescale 1ns/1ps
+
 module tb ();
-    int arr1 [15];
-    int arr2 [15];
+    reg clk, resetn;
 
+    // 1.initialize global variable
     initial begin
-        foreach(arr1[j]) 
-            arr1[j] = $urandom % 64;
-        foreach(arr2[k]) 
-            arr2[k] = $urandom % 64;
+        clk = 0;
+        resetn = 0;
+    end
 
-        $display("arr1: %0p", arr1);
-        $display("arr2: %0p", arr2);
+    // 2.keep low for 60 ns
+    initial begin
+        #60;
+        resetn = 1;
+    end
+
+    // 3.system task at the start of simulation
+    initial begin
+        $fsdbDumpfile("top.fsdb");
+        $fsdbDumpMDA;
+        $fsdbDumpvars;
+    end
+
+    // 4.analyzing values of the variable on console
+    initial begin
+        $monitor("resetn : %0d at time : %0t", resetn, $time);
+    end
+
+    //finish
+    initial begin
+        #100;
+        $finish();
     end
 endmodule
